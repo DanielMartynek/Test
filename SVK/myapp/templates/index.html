@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Medical Database</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+      }
+      .chartMenu {
+        width: 100vw;
+        height: 40px;
+        background: #1A1A1A;
+        color: rgba(54, 162, 235, 1);
+      }
+      .chartMenu p {
+        padding: 10px;
+        font-size: 20px;
+      }
+      .chartCard {
+        width: 100vw;
+        height: calc(100vh - 40px);
+        background: rgba(54, 162, 235, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .chartBox {
+        width: 700px;
+        padding: 20px;
+        border-radius: 20px;
+        border: solid 3px rgba(54, 162, 235, 1);
+        background: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chartMenu">
+      <p>Medical Database</p>
+    </div>
+
+    <form method="POST" action = "/" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type = "file" name="database">
+    <input type = "submit" name = "submit">
+    </form>
+
+    <input onclick="chartValues('Age')" type="radio" value="Age" name="chart"> Age
+    <input onclick="chartValues('Gender')" type="radio" value="Gender" name="chart"> Gender
+    <input onclick="chartValues('BMI')" type="radio" value="BMI" name="chart"> BMI
+    <input onclick="chartValues('Indication')" type="radio" value="Indication" name="chart"> Indication
+    <input onclick="chartValues('Type')" type="radio" value="Type" name="chart"> Type
+    <input onclick="chartValues('Mesh')" type="radio" value="Mesh" name="chart"> Mesh
+    <input onclick="chartValues('Intraoperative')" type="radio" value="Intraoperative" name="chart"> Intraoperative
+    <input onclick="chartValues('Problems')" type="radio" value="Problems" name="chart"> Problems
+    <input onclick="chartValues('Gender_class')" type="radio" value="Gender_class" name="chart"> Gender
+    <input onclick="chartValues('Problems_class')" type="radio" value="Problems_class" name="chart"> Problems
+
+    <div class="chartCard">
+      <div class="chartBox">
+        <canvas id="myChart"></canvas>
+      </div>
+    </div>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js"></script>
+    <script>
+    // setup
+    const data = {
+      labels: [],
+      datasets: [{
+        label: 'Number of Patients',
+        data: [],
+        backgroundColor: [
+          'rgba(255, 26, 104, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)',
+          'rgba(0, 0, 0, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255, 26, 104, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(0, 0, 0, 1)'
+        ],
+        borderWidth: 1
+      }]
+    };
+    const data2 = {
+      datasets: [{
+        label: 'Scatter Dataset',
+        data: [{x:35,y:5},{x:3,y:8}],
+        backgroundColor: 'rgb(30, 30, 255)'
+      },{
+        label: 'Scatter Dataset2',
+        data: [{x:2,y:5}],
+        backgroundColor: 'rgb(255, 30, 30)'
+      }],
+
+    };
+
+
+
+    // config
+    const config = {
+      type: 'bar',
+      data,
+      options: {
+
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        },
+      plugins: {
+         legend: {
+            display: false
+         }
+      }
+
+      }
+    };
+    const config2 = {
+      type: 'scatter',
+      data: data2,
+      options: {
+        scales: {
+          x:{
+            ticks:{
+              beginAtZero: false
+            }
+          },
+          x: {
+            type: 'linear',
+            position: 'bottom'
+          }
+        }
+      }
+    };
+
+
+    // render init block
+    let myChart = new Chart(
+      document.getElementById('myChart'),
+      config
+    );
+
+
+
+    // Instantly assign Chart.js version
+    const chartVersion = document.getElementById('chartVersion');
+    chartVersion.innerText = Chart.version;
+
+    function chartValues(value){
+      myChart.destroy();
+      switch(value) {
+      case 'Age':
+        myChart.data.datasets[0].data = {{counts}}[0];
+        myChart.data.labels =["<20", "25-34", "35-44", "45-54","55-64","65-74",">75"];
+        myChart = new Chart(
+        document.getElementById('myChart'),
+        config
+        );
+
+        break;
+      case 'Gender':
+        myChart.data.datasets[0].data = {{counts}}[1];
+        myChart.data.labels = ["Female", "Male"];
+        myChart = new Chart(
+        document.getElementById('myChart'),
+        config
+        );
+        break;
+      case 'BMI':
+        myChart.data.datasets[0].data = {{counts}}[2];
+        myChart.data.labels = [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54];
+        myChart = new Chart(
+        document.getElementById('myChart'),
+        config
+        );
+        break;
+      case 'Indication':
+        myChart.data.datasets[0].data = {{counts}}[3];
+        myChart.data.labels = ["Emergency", "Elective"];
+        myChart = new Chart(
+        document.getElementById('myChart'),
+        config
+        );
+        break;
+      case 'Type':
+        myChart.data.datasets[0].data = {{counts}}[4];
+        myChart.data.labels = ['Open','TEP','TAPP','rTEP','rTAP','Other'];
+        myChart = new Chart(
+        document.getElementById('myChart'),
+        config
+        );
+        break;
+      case 'Mesh':
+        myChart.data.datasets[0].data = {{counts}}[5];
+        myChart.data.labels = ['Non-mesh repair done','Mesh repair done'];
+        myChart = new Chart(
+        document.getElementById('myChart'),
+        config
+        );
+        break;
+      case 'Intraoperative':
+        myChart.data.datasets[0].data = {{counts}}[6];
+        myChart.data.labels = ['No', 'Yes'];
+        myChart = new Chart(
+        document.getElementById('myChart'),
+        config
+        );
+        break;
+      case 'Problems':
+        myChart.data.datasets[0].data = {{counts}}[7];
+        myChart.data.labels = ['False','True'];
+        myChart = new Chart(
+        document.getElementById('myChart'),
+        config
+        );
+        break;
+      case 'Gender_class':
+        myChart = new Chart(
+        document.getElementById('myChart'),
+        config2
+        );
+        const xData_m = {{m_b}};
+        const yData_m = {{m_a}};
+        const data_m = xData_m.map((x, i) => {
+          return {
+            x: x,
+            y: yData_m[i]
+          };
+        });
+        const xData_f = {{f_b}};
+        const yData_f = {{f_a}};
+        const data_f = xData_f.map((x, i) => {
+          return {
+            x: x,
+            y: yData_f[i]
+          };
+        });
+        myChart.config.data.datasets[0].label = "Male";
+        myChart.config.data.datasets[0].data = data_m;
+        myChart.config.data.datasets[1].label = "Female";
+        myChart.config.data.datasets[1].data = data_f;
+        myChart.update();
+        break;
+        case 'Problems_class':
+        myChart = new Chart(
+        document.getElementById('myChart'),
+        config2
+        );
+        const xData_c = {{c_b}};
+        const yData_c = {{c_a}};
+        const data_c = xData_c.map((x, i) => {
+          return {
+            x: x,
+            y: yData_c[i]
+          };
+        });
+        const xData_n = {{n_b}};
+        const yData_n = {{n_a}};
+        const data_n = xData_n.map((x, i) => {
+          return {
+            x: x,
+            y: yData_n[i]
+          };
+        });
+        myChart.config.data.datasets[1].label = "Complications";
+        myChart.config.data.datasets[1].data = data_c;
+        myChart.config.data.datasets[0].label = "No complications";
+        myChart.config.data.datasets[0].data = data_n;
+        myChart.update();
+        }
+
+
+
+
+    }
+
+    </script>
+
+  </body>
+</html>
